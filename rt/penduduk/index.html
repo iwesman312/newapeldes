@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Lampid</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Laporan Lampid</h1>
+    <table border="1" style="width: 100%; text-align: center;">
+        <thead>
+            <tr>
+                <th>RW</th>
+                <th>Total Penduduk</th>
+                <th>Total Laki-laki</th>
+                <th>Total Perempuan</th>
+                <th>Baru Lahir</th>
+                <th>Meninggal</th>
+                <th>Datang</th>
+                <th>Pindah</th>
+                <th>Total Akhir</th>
+            </tr>
+        </thead>
+        <tbody id="laporan-table"></tbody>
+    </table>
+    <canvas id="laporan-chart" width="400" height="200" style="margin-top: 20px;"></canvas>
+
+    <script>
+        // Ambil data dari laporan.php
+        fetch('laporan.php')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('laporan-table');
+                const labels = [];
+                const totalPenduduk = [];
+
+                data.forEach(row => {
+                    labels.push(`RW ${row.rw}`);
+                    totalPenduduk.push(row.total_penduduk);
+
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${row.rw}</td>
+                            <td>${row.total_penduduk}</td>
+                            <td>${row.total_laki_laki}</td>
+                            <td>${row.total_perempuan}</td>
+                            <td>${row.jumlah_baru_lahir}</td>
+                            <td>${row.jumlah_meninggal}</td>
+                            <td>${row.jumlah_datang}</td>
+                            <td>${row.jumlah_pindah}</td>
+                            <td>${row.total_akhir}</td>
+                        </tr>
+                    `;
+                });
+
+                // Render chart
+                const ctx = document.getElementById('laporan-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total Penduduk per RW',
+                            data: totalPenduduk,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
